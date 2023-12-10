@@ -1,3 +1,5 @@
+pub mod utils;
+
 pub trait AocResult {
     fn from_aoc(&self) -> Option<String>;
 }

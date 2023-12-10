@@ -15,12 +15,12 @@ macro_rules! aoc {
         use $inputPath:expr;
         $($tail:tt)*
     } => {
-        use aoc_2023::AocResult;
+        use $crate::AocResult;
 
         fluid_let::fluid_let!(static DEBUG: bool = false);
 
         fn main() {
-            aoc_2023::run_top_level_stmts!($($tail)*);
+            $crate::run_top_level_stmts!($($tail)*);
 
             let path = $inputPath;
             println!("Reading {}...", path);
@@ -32,12 +32,10 @@ macro_rules! aoc {
                 }
                 Ok(input) => {
                     let input = input.as_str();
-                    aoc_2023::run_parts!(input, $($tail)*);
+                    $crate::run_parts!(input, $($tail)*);
                 }
             }
         }
-
-        aoc_2023::declare_parts!($($tail)*);
     };
 }
 
@@ -46,34 +44,21 @@ macro_rules! run_top_level_stmts {
     () => {};
     ($body:expr; $($tail:tt)*) => {
         $body;
-        aoc_2023::run_top_level_stmts!($($tail)*)
+        $crate::run_top_level_stmts!($($tail)*)
     };
     (
         fn $partn:ident($param:ident) $body:block
         $($tail:tt)* 
     ) => {
         fn $partn($param: &str) -> impl AocResult + $body
-        aoc_2023::run_top_level_stmts!($($tail)*);
-    };
-}
-
-#[macro_export]
-macro_rules! declare_parts {
-    () => {};
-    ($_:expr; $($tail:tt)*) => { aoc_2023::declare_parts!($($tail)*); };
-    (
-        fn $partn:ident($param:ident) $body:block
-        $($tail:tt)* 
-    ) => {
-        fn $partn($param: &str) -> impl AocResult $body
-        aoc_2023::declare_parts!($($tail)*);
+        $crate::run_top_level_stmts!($($tail)*);
     };
 }
 
 #[macro_export]
 macro_rules! run_parts {
     ($input:expr,) => {};
-    ($input:expr, $_:expr; $($tail:tt)*) => { aoc_2023::run_parts!($input, $($tail)*) };
+    ($input:expr, $_:expr; $($tail:tt)*) => { $crate::run_parts!($input, $($tail)*) };
     (
         $input:expr,
         fn $partn:ident($_1:ident) $_2:block
@@ -90,7 +75,7 @@ macro_rules! run_parts {
             }
         }
 
-        aoc_2023::run_parts!($input, $($tail)*)
+        $crate::run_parts!($input, $($tail)*)
     };
 }
 

@@ -9,3 +9,4 @@ edition = "2021"
 indoc = "2.0.4"
 fluid-let = { version = "1.0.0", features = ["static-init"] }
 aho-corasick = "1.1.2"
+regex = "1.10.2"

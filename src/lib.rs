@@ -9,6 +9,8 @@ impl AocResult for &str { fn from_aoc(&self) -> Option<String> { Some(self.to_st
 impl AocResult for str { fn from_aoc(&self) -> Option<String> { Some(self.to_string()) } }
 impl AocResult for i32 { fn from_aoc(&self) -> Option<String> { Some(ToString::to_string(self)) } }
 impl AocResult for u32 { fn from_aoc(&self) -> Option<String> { Some(ToString::to_string(self)) } }
+impl AocResult for i64 { fn from_aoc(&self) -> Option<String> { Some(ToString::to_string(self)) } }
+impl AocResult for u64 { fn from_aoc(&self) -> Option<String> { Some(ToString::to_string(self)) } }
 impl AocResult for () { fn from_aoc(&self) -> Option<String> { None } }
 
 #[macro_export]

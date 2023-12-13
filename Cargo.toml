@@ -12,3 +12,4 @@ aho-corasick = "1.1.2"
 regex = "1.10.2"
 itertools = "0.12.0"
 colored = "2.1.0"
+phf = { verison = "0.11.2", features = ["macros"] }

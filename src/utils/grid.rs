@@ -1,11 +1,11 @@
-use std::{slice::{Iter, Chunks}, ops::{IndexMut, Index, Deref}, fmt::Display};
+use std::{slice::{Iter, Chunks}, ops::{IndexMut, Index, Deref}, fmt::Display, iter};
 
 use itertools::Itertools;
 
 pub struct Grid<T> {
     arr: Vec<T>,
-    width: usize,
-    height: usize,
+    pub width: usize,
+    pub height: usize,
 }
 
 impl<T> Grid<T> {
@@ -59,6 +59,33 @@ impl<T : Copy> Grid<T> {
         where F : Fn(T) -> U
     {
         Grid { arr: self.arr.iter().map(|r| f(*r)).collect_vec(), width: self.width, height: self.height }
+    }
+
+    pub fn grow(&self, n: usize, fill: T) -> Grid<T> {
+        let rows = self.arr.iter().chunks(self.width);
+
+        let expanded_rows = rows
+            .into_iter()
+            .flat_map(|c| c.chain(iter::repeat(&fill).take(n * 2)))
+            .map(|x| *x);
+
+        let blank_top = iter::repeat(fill).take(self.width + n * 3);
+        let blank_bottom = iter::repeat(fill).take(self.width + n);
+
+        Grid {
+            arr: blank_top.chain(expanded_rows).chain(blank_bottom).collect_vec(),
+            width: self.width + n * 2,
+            height: self.height + n * 2,
+        }
+    }
+
+    pub fn subdivide_by<U : Copy, F, const W: usize, const H: usize>(&self, f: F) -> Grid<U>
+        where F : Fn(T) -> [[U; W]; H]
+    {
+        let grid = self.map(f);
+        Grid::new_from(self.width * W, self.height * H, |(x, y)| {
+            grid[(x / W, y / H)][y % H][x % W]
+        })
     }
 }
 

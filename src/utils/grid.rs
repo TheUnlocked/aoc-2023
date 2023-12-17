@@ -87,6 +87,10 @@ impl<T : Copy> Grid<T> {
             grid[(x / W, y / H)][y % H][x % W]
         })
     }
+
+    pub fn columns<'a>(&'a self) -> Columns<'a, T> {
+        Columns::new(self)
+    }
 }
 
 impl From<&str> for Grid<char> {
@@ -167,5 +171,58 @@ impl<'a, T> Iterator for GridIndices<'a, T> {
             }
         }
         
+    }
+}
+
+pub struct Columns<'a, T> {
+    grid: &'a Grid<T>,
+    x: usize,
+}
+
+impl<'a, T> Columns<'a, T> {
+    fn new(grid: &'a Grid<T>) -> Columns<'a, T> {
+        Columns { grid, x: 0 }
+    }
+}
+
+impl<'a, T : Sized> Iterator for Columns<'a, T> {
+    type Item = Column<'a, T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.x < self.grid.width {
+            let result = Column::new(&self.grid, self.x);
+            self.x += 1;
+            Some(result)
+        }
+        else {
+            None
+        }
+    }
+}
+
+pub struct Column<'a, T> {
+    grid: &'a Grid<T>,
+    x: usize,
+    y: usize,
+}
+
+impl<'a, T> Column<'a, T> {
+    fn new(grid: &Grid<T>, x: usize) -> Column<T> {
+        Column { grid, x, y: 0 }
+    }
+}
+
+impl<'a, T : Sized> Iterator for Column<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.y < self.grid.height {
+            let result = &self.grid[(self.x, self.y)];
+            self.y += 1;
+            Some(result)
+        }
+        else {
+            None
+        }
     }
 }

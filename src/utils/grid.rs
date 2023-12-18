@@ -92,6 +92,13 @@ impl<T : Copy> Grid<T> {
         Columns::new(self)
     }
 
+    pub fn flip_horizontal(&self) -> Self {
+        let arr = self.rows()
+            .flat_map(|r| r.iter().rev().map(|x| *x))
+            .collect_vec();
+        Grid { arr, ..*self }
+    }
+
     pub fn transpose(&self) -> Self {
         let arr = Vec::from_iter(
             (0..self.width * self.height)
@@ -133,6 +140,12 @@ impl<T> Index<(usize, usize)> for Grid<T> {
 impl<T> IndexMut<(usize, usize)> for Grid<T> {
     fn index_mut(&mut self, index: (usize, usize)) -> &mut Self::Output {
         &mut self.arr[index.0 + index.1 * self.width]
+    }
+}
+
+impl<T : Clone> Clone for Grid<T> {
+    fn clone(&self) -> Self {
+        Self { arr: self.arr.clone(), width: self.width, height: self.height }
     }
 }
 

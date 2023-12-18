@@ -91,17 +91,26 @@ impl<T : Copy> Grid<T> {
     pub fn columns<'a>(&'a self) -> Columns<'a, T> {
         Columns::new(self)
     }
+
+    pub fn transpose(&self) -> Self {
+        let arr = Vec::from_iter(
+            (0..self.width * self.height)
+                .map(|i| self[(i / self.height, i % self.height)])
+        );
+        Grid { arr, width: self.height, height: self.width }
+    }
+
 }
 
 impl From<&str> for Grid<char> {
     fn from(value: &str) -> Self {
         let width = value.find('\n').unwrap_or(value.len());
-        let height = value.len() / width;
-        Grid::new(
-            width,
-            height,
-            value.chars().filter(|c| *c != '\n').collect()
-        )
+        let init: Vec<char> = value.chars()
+            .filter(|c| *c != '\n')
+            .collect();
+        let height = init.len() / width;
+        
+        Grid::new(width, height, init)
     }
 }
 
